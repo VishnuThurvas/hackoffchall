@@ -1,11 +1,26 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { getStoredToken, decodeJWT } from '@/lib/jwt';
 
 const Index = () => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const token = getStoredToken();
+    if (token) {
+      const decoded = decodeJWT(token);
+      if (decoded && decoded.exp > Date.now() / 1000) {
+        navigate('/dashboard');
+        return;
+      }
+    }
+    navigate('/login');
+  }, [navigate]);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background">
-      <div className="text-center">
-        <h1 className="mb-4 text-4xl font-bold">Welcome to Your Blank App</h1>
-        <p className="text-xl text-muted-foreground">Start building your amazing project here!</p>
+    <div className="min-h-screen bg-terminal flex items-center justify-center">
+      <div className="text-neon-green font-mono animate-pulse">
+        Initializing...
       </div>
     </div>
   );
