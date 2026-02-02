@@ -9,14 +9,14 @@ import {
   CheckCircle2, 
   Clock, 
   User, 
-  Key,
-  Fingerprint,
-  Server
+  Server,
+  FileText,
+  Database,
+  Activity
 } from 'lucide-react';
 
 const Dashboard = () => {
   const [user, setUser] = useState<JWTPayload | null>(null);
-  const [token, setToken] = useState<string>('');
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,7 +33,6 @@ const Dashboard = () => {
     }
 
     setUser(decoded);
-    setToken(storedToken);
   }, [navigate]);
 
   const handleLogout = () => {
@@ -57,8 +56,8 @@ const Dashboard = () => {
           <div className="flex items-center gap-3">
             <Shield className="w-8 h-8 text-neon-green animate-pulse-glow" />
             <div>
-              <h1 className="text-xl font-bold text-neon-green font-mono">CTF CHALLENGE</h1>
-              <p className="text-neon-green/50 text-sm font-mono">Secure Terminal v2.0</p>
+              <h1 className="text-xl font-bold text-neon-green font-mono">SECURE PORTAL</h1>
+              <p className="text-neon-green/50 text-sm font-mono">Admin Dashboard v2.0</p>
             </div>
           </div>
           <Button
@@ -105,6 +104,10 @@ const Dashboard = () => {
                 <span className="text-neon-green/50">Role:</span>
                 <span className="text-neon-cyan">{user.role}</span>
               </div>
+              <div className="flex justify-between">
+                <span className="text-neon-green/50">Access Level:</span>
+                <span className="text-neon-green">FULL</span>
+              </div>
             </div>
           </div>
 
@@ -116,12 +119,16 @@ const Dashboard = () => {
             </div>
             <div className="space-y-3 font-mono text-sm">
               <div className="flex justify-between">
-                <span className="text-neon-green/50">Issued:</span>
+                <span className="text-neon-green/50">Started:</span>
                 <span className="text-neon-green">{new Date(user.iat * 1000).toLocaleTimeString()}</span>
               </div>
               <div className="flex justify-between">
                 <span className="text-neon-green/50">Expires:</span>
                 <span className="text-neon-green">{new Date(user.exp * 1000).toLocaleTimeString()}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neon-green/50">Auth Type:</span>
+                <span className="text-neon-green">Token</span>
               </div>
             </div>
           </div>
@@ -141,47 +148,105 @@ const Dashboard = () => {
                 </span>
               </div>
               <div className="flex justify-between">
-                <span className="text-neon-green/50">Protocol:</span>
-                <span className="text-neon-green">JWT</span>
+                <span className="text-neon-green/50">Region:</span>
+                <span className="text-neon-green">US-EAST</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-neon-green/50">Latency:</span>
+                <span className="text-neon-green">12ms</span>
               </div>
             </div>
           </div>
         </div>
 
-        {/* Token Display */}
-        <div className="bg-terminal-dark/80 border border-neon-green/20 rounded-lg p-6 mb-8">
-          <div className="flex items-center gap-3 mb-4">
-            <Key className="w-5 h-5 text-neon-cyan" />
-            <h3 className="text-neon-green font-mono font-bold">YOUR SESSION TOKEN</h3>
+        {/* Additional Dashboard Sections */}
+        <div className="grid md:grid-cols-2 gap-6 mb-8">
+          {/* System Logs */}
+          <div className="bg-terminal-dark/80 border border-neon-green/20 rounded-lg p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <FileText className="w-5 h-5 text-neon-cyan" />
+              <h3 className="text-neon-green font-mono font-bold">RECENT ACTIVITY</h3>
+            </div>
+            <div className="space-y-2 font-mono text-xs">
+              <div className="flex items-center gap-2 text-neon-green/70">
+                <span className="text-neon-green/40">[{new Date().toLocaleTimeString()}]</span>
+                <span>Login successful</span>
+              </div>
+              <div className="flex items-center gap-2 text-neon-green/70">
+                <span className="text-neon-green/40">[{new Date(Date.now() - 60000).toLocaleTimeString()}]</span>
+                <span>Session initialized</span>
+              </div>
+              <div className="flex items-center gap-2 text-neon-green/70">
+                <span className="text-neon-green/40">[{new Date(Date.now() - 120000).toLocaleTimeString()}]</span>
+                <span>Authentication verified</span>
+              </div>
+              <div className="flex items-center gap-2 text-neon-green/70">
+                <span className="text-neon-green/40">[{new Date(Date.now() - 180000).toLocaleTimeString()}]</span>
+                <span>Token generated</span>
+              </div>
+            </div>
           </div>
-          <div className="bg-terminal p-4 rounded border border-neon-green/10 overflow-x-auto">
-            <code className="text-neon-green/80 font-mono text-sm break-all">
-              {token}
-            </code>
+
+          {/* System Stats */}
+          <div className="bg-terminal-dark/80 border border-neon-green/20 rounded-lg p-6">
+            <div className="flex items-center gap-3 mb-4">
+              <Activity className="w-5 h-5 text-neon-cyan" />
+              <h3 className="text-neon-green font-mono font-bold">SYSTEM STATS</h3>
+            </div>
+            <div className="space-y-4">
+              <div>
+                <div className="flex justify-between font-mono text-xs mb-1">
+                  <span className="text-neon-green/50">CPU Usage</span>
+                  <span className="text-neon-green">23%</span>
+                </div>
+                <div className="h-2 bg-terminal rounded-full overflow-hidden">
+                  <div className="h-full bg-neon-green/50 rounded-full" style={{ width: '23%' }} />
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between font-mono text-xs mb-1">
+                  <span className="text-neon-green/50">Memory</span>
+                  <span className="text-neon-green">41%</span>
+                </div>
+                <div className="h-2 bg-terminal rounded-full overflow-hidden">
+                  <div className="h-full bg-neon-cyan/50 rounded-full" style={{ width: '41%' }} />
+                </div>
+              </div>
+              <div>
+                <div className="flex justify-between font-mono text-xs mb-1">
+                  <span className="text-neon-green/50">Storage</span>
+                  <span className="text-neon-green">67%</span>
+                </div>
+                <div className="h-2 bg-terminal rounded-full overflow-hidden">
+                  <div className="h-full bg-neon-green/50 rounded-full" style={{ width: '67%' }} />
+                </div>
+              </div>
+            </div>
           </div>
-          <p className="mt-4 text-neon-green/40 font-mono text-xs">
-            💡 This token contains your session data. Can you find what's hidden inside?
-          </p>
         </div>
 
-        {/* Challenge Hint */}
-        <div className="bg-terminal-dark/80 border border-neon-cyan/20 rounded-lg p-6">
+        {/* Database Info */}
+        <div className="bg-terminal-dark/80 border border-neon-green/20 rounded-lg p-6 mb-8">
           <div className="flex items-center gap-3 mb-4">
-            <Fingerprint className="w-5 h-5 text-neon-cyan" />
-            <h3 className="text-neon-cyan font-mono font-bold">CHALLENGE OBJECTIVE</h3>
+            <Database className="w-5 h-5 text-neon-cyan" />
+            <h3 className="text-neon-green font-mono font-bold">DATABASE STATUS</h3>
           </div>
-          <div className="space-y-4 font-mono text-sm">
-            <p className="text-neon-green/70">
-              Your mission: <span className="text-neon-green">Find the hidden flag</span>
-            </p>
-            <div className="bg-terminal p-4 rounded border border-neon-cyan/10">
-              <p className="text-neon-green/50 mb-2">// HINTS:</p>
-              <ul className="space-y-1 text-neon-green/60">
-                <li>• JWT tokens have three parts separated by dots</li>
-                <li>• The middle part contains the payload</li>
-                <li>• Base64 decoding might reveal secrets...</li>
-                <li>• Flag format: hackoff&#123;...&#125;</li>
-              </ul>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 font-mono text-sm">
+            <div className="text-center p-4 bg-terminal rounded-lg">
+              <div className="text-2xl font-bold text-neon-green">1,247</div>
+              <div className="text-neon-green/50 text-xs">Total Records</div>
+            </div>
+            <div className="text-center p-4 bg-terminal rounded-lg">
+              <div className="text-2xl font-bold text-neon-cyan">89</div>
+              <div className="text-neon-green/50 text-xs">Active Users</div>
+            </div>
+            <div className="text-center p-4 bg-terminal rounded-lg">
+              <div className="text-2xl font-bold text-neon-green">99.9%</div>
+              <div className="text-neon-green/50 text-xs">Uptime</div>
+            </div>
+            <div className="text-center p-4 bg-terminal rounded-lg">
+              <div className="text-2xl font-bold text-neon-cyan">5</div>
+              <div className="text-neon-green/50 text-xs">Connections</div>
             </div>
           </div>
         </div>
@@ -190,7 +255,7 @@ const Dashboard = () => {
         <div className="mt-8 pt-4 border-t border-neon-green/20">
           <div className="flex items-center gap-2 text-neon-green/40 font-mono text-xs">
             <Terminal className="w-4 h-4" />
-            <span>root@ctf-server:~$ </span>
+            <span>admin@secure-portal:~$ </span>
             <span className="animate-pulse">_</span>
           </div>
         </div>

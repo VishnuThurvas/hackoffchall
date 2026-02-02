@@ -61,13 +61,22 @@ export function decodeJWT(token: string): JWTPayload | null {
 }
 
 export function getStoredToken(): string | null {
-  return localStorage.getItem('auth_token');
+  const cookies = document.cookie.split(';');
+  for (const cookie of cookies) {
+    const [name, value] = cookie.trim().split('=');
+    if (name === 'session_token') {
+      return decodeURIComponent(value);
+    }
+  }
+  return null;
 }
 
 export function setStoredToken(token: string): void {
-  localStorage.setItem('auth_token', token);
+  // Set cookie with 1 hour expiry
+  const expires = new Date(Date.now() + 3600 * 1000).toUTCString();
+  document.cookie = `session_token=${encodeURIComponent(token)}; expires=${expires}; path=/; SameSite=Lax`;
 }
 
 export function clearStoredToken(): void {
-  localStorage.removeItem('auth_token');
+  document.cookie = 'session_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/';
 }
